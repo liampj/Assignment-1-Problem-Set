@@ -1,0 +1,562 @@
+---
+title: "Assignment One: Problem Set"
+author: "Liam Palcu-Johnston"
+subtitle: "McGill University"
+date: "September 25, 2020"
+output:
+  prettydoc::html_pretty:
+    theme: architect
+    toc: true
+    number_sections: true
+    
+---
+```{r setup}
+#If you run this code please install the prettydoc package
+library(prettydoc);library(datasets);library(dplyr);library(ggplot2);library(kableExtra);library(Hmisc);library(pastecs);library(qwraps2);library(plyr);library(ggdark);library(ggpubr);library(numbers);library(readxl);library(car);library(tools);library(viridis);library(plotly);library(readxl)
+
+#Loading datasets and removing unnecessary values
+country<- read_excel("C:/Users/palcu/Documents/Master's Political Science - Fall 2020/Political Science 618/Political Science 618 Assignments/Assignment 1/CountryRatings1973-2020.xlsx",sheet = "Country Ratings, Statuses ", na="-", col_names = FALSE)
+year<- read_excel("C:/Users/palcu/Documents/Master's Political Science - Fall 2020/Political Science 618/Political Science 618 Assignments/Assignment 1/CountryRatings1973-2020.xlsx",
+                  sheet = "Country Ratings, Statuses ", na=c("Survey Edition", "Year(s) Under Review", "-", "PR", "CL", "Status","PF","NF","F","2(5)", "3(6)", "F (NF)", 1:7), col_names = FALSE)
+
+#Creating data set for values to answer question 1
+Question<-c("1A", "1B", "1C", "1D", "1E", "1F", "1G")
+Question<-data.frame(Question)
+Answer<-c("Constant", "Variable", "Variable", "Constant", "Constant", "Variable","Variable")
+Answer<-data.frame(Answer)
+One<-cbind(Question,Answer)
+```
+
+# **Question 1 - 1.8.1**
+```{r message=FALSE, warning=FALSE}
+#Creating table to present results for question 1 
+kable(One)%>%kable_styling(bootstrap_options = c("striped", "hover", "condensed","responsive", "bordered"))%>%
+  column_spec(1, bold=TRUE, background="skyblue", color="black")%>%
+  row_spec(0, bold=TRUE, background="skyblue", color="black")%>%
+  row_spec(1:7, color="black")
+```
+
+# **Question 1 - 1.8.1**
+```{r message=FALSE, warning=FALSE}
+#Creating data set to answer question 1B
+Question<-c("2A", "2B", "2C", "2D", "2E", "2F", "2G", "2H", "2I")
+Question<-data.frame(Question)
+Answer<-c("Value", "Variable", "Value", "Variable", "Value",
+          "Value", "Variable", "Variable", "Variable")
+Answer<-data.frame(Answer)
+Two<-cbind(Question, Answer)
+
+#Creating table to present results
+kable(Two)%>%kable_styling(bootstrap_options = c("striped", "hover", "condensed","responsive", "bordered"))%>%
+  column_spec(1, bold=TRUE, background="skyblue", color="black")%>%
+  row_spec(0, bold=TRUE, background="skyblue", color="black")%>%
+  row_spec(1:9, color="black")  
+```
+
+# **Question 1 - 2.4.2**
+```{r message=FALSE, warning=FALSE}
+#Creating data set to answer question 1
+Questions<-c("Ratio", "Proportion", "Percentage")
+Q10A<-c("105342:630398", "0.1431783", "14.31783%")
+Q10B<-c("221:312", "0.4146341", "41.46341%")
+Q10C<-c("221:432", "0.338438", "33.8438%")
+Questions<-data.frame(Questions)
+Q10A<-data.frame(Q10A)
+Q10B<-data.frame(Q10B)
+Q10C<-data.frame(Q10C)
+Q1<-cbind(Questions, Q10A, Q10B, Q10C)
+Q1<-dplyr::rename(Q1,"10A"="Q10A", "10B"="Q10B", "10C"="Q10C")
+
+#Creating table to present results
+kable(Q1)%>%kable_styling(bootstrap_options = c("striped", "hover", "condensed","responsive", "bordered"))%>%
+  column_spec(1, bold=TRUE, background="skyblue", color="black")%>%
+  row_spec(0, bold=TRUE, background="skyblue", color="black")%>%
+  row_spec(1:3, color="black")
+```
+
+
+# **Question 1 - 2.4.1**
+```{r message=FALSE, warning=FALSE}
+#Creating data set to answer question 1
+Question<-c("11", "12", "13", "14")
+Answer<-c("4.765431% Decrease", "4.111168% Decrease", "10.7142857143 Change%", "3:2")
+Q2<-cbind(Question, Answer)
+Q2<-data.frame(Q2)
+
+#Creating table to present results
+kable(Q2)%>%kable_styling(bootstrap_options = c("striped", "hover", "condensed","responsive", "bordered"))%>%
+  column_spec(1, bold=TRUE, background="skyblue", color="black")%>%
+  row_spec(0, bold=TRUE, background="skyblue", color="black")%>%
+  row_spec(1:4, color="black")
+```
+
+
+# **Question 2 - Summary Statistics Drug One**
+```{r message=FALSE, warning=FALSE}
+#Uploading dataset
+sleep<-datasets::sleep
+
+#Making group variable a factor variable and giving it labels
+sleep$group<-factor(sleep$group, levels = c("1","2"),labels=c("Drug One", "Drug Two"))
+
+#Subsetting the data to create summary tables 
+d1<-dplyr::filter(sleep, group=="Drug One")
+d2<-dplyr::filter(sleep, group=="Drug Two")
+
+#Cacluating summary statistics for the two drugs
+DS1<-list("Drug 1" =list("Mean"=~mean(d1$extra),"Median"=~median(d1$extra),"Maximum"=~max(d1$extra), "Minimum"=~min(d1$extra),"Standard Deviation"=~sd(d1$extra)))
+DS2<-list("Drug 2" = list("Mean"=~mean(d2$extra),"Median"=~median(d2$extra),"Maximum"=~max(d2$extra), "Minimum"=~min(d2$extra),"Standard Deviation"=~sd(d2$extra)))
+
+#Creating summary tables and renaming the columns to put into my kable table
+DS1T<- summary_table(d1, DS1)
+DS1T<-data.frame(DS1T)
+DS1T<-dplyr::rename(DS1T, "Subjects Drug One (N=10)" = "d1..N...10.")
+DS2T<-summary_table(d2, DS2)
+DS2T<-data.frame(DS2T)
+DS2T<-dplyr::rename(DS2T, "Subjects Drug Two (N=10)" = "d2..N...10.")
+
+#Creating table to present results
+kable(DS1T)%>% kable_styling(bootstrap_options = c("striped", "hover", "condensed","responsive", "bordered"))%>%
+column_spec(1, bold=TRUE, background="skyblue", color="black")%>%
+row_spec(0, bold=TRUE, background="skyblue", color="black")%>%
+row_spec(1:5, color="black")
+```
+
+# **Question 2 - Summary Statistics Drug One**
+```{r essage=FALSE, warning=FALSE}
+#Creating table to present results
+kable(DS2T)%>%kable_styling(bootstrap_options = c("striped", "hover", "condensed","responsive", "bordered"))%>%
+  column_spec(1, bold=TRUE, background="skyblue", color="black")%>%
+  row_spec(0, bold=TRUE, background="skyblue", color="black")%>%
+  row_spec(1:5, color="black")  
+```
+
+# **Question 2 - Comparing the Effects of Insomnia Drugs** 
+```{r message=FALSE, warning=FALSE}
+#Creating mean-line that can be used for my histogram 
+mg<- ddply(sleep, "group", summarise, mean=mean(extra))
+
+#Creating a histogram plot to compare the two types of drugs
+p<-ggplot(sleep, aes(x=extra, colour=group)) + 
+  #Altering bindwidth and colour of plot
+  geom_histogram(binwidth=1,
+                 colour="steelblue1",
+                 fill="steelblue1",
+                 alpha=0.3)+
+  #Changing the names of the title and x-y axis titles
+  labs(x="Hours Slept", y="Count",title="Comparing the Effects of Insomnia Drugs")+
+  #Presenting two seperate graphs for the drugs
+  facet_wrap(~group)+
+  #Creating the x-axis scale 
+  scale_x_continuous(breaks = seq(from = -1.6, to=5.5, by=1))+
+  #Changing the overall colour theme of the plot
+  dark_theme_gray()+
+  #Removing grid lines on plot
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())+
+  #Implementing mean line in graph
+  geom_vline(data=mg, aes(xintercept=mean, color=group),
+           linetype="dashed")+
+  #Removing legend
+  theme(legend.position="none")+
+  #Changing font size and colour
+  font("title", size = 14, colour = "snow")+
+  font("xy.title", size = 12, colour = "snow")+
+  font("xy.text", color="snow")
+
+#Creating an interactive plot
+ggplotly(p)
+```
+
+# **Question 2 - Interpretation of Results**
+The results of this study suggest that drug two is more effective at treating insomnia. On average, subjects who took drug two had a 2.33 hour increase in sleep, while subjects who took drug one only had 0.75 hour increase in sleep. Thus, I would take drug two if I was dealing with insomnia.
+
+
+# **Question 3**
+```{r}
+#Creating a dataset which has country, PR, CL, and status variables
+country<-country[-c(1:3),]
+
+#Creating list of title names
+titlelist<-c("PR-","CL-","Status-")
+
+#Making the number of titles I want
+NoT<- rep(titlelist, 47)
+
+#Making loop that makes column titles for every third column and putting a different
+#number after each title (e.g., PR-1, CL-1, Status-1, PR-2, CL-2, Status-2, PR-3, CL-3, Status-3)
+titlesloop<- 1:length(NoT)
+titlesloop<- as.character(ifelse(mod(titlesloop,3)>0,floor(titlesloop/3)+1,floor(titlesloop/3)))
+headers <- c("country",paste0(NoT,titlesloop))
+colnames(country) <- paste0(headers, seq_len(ncol(country)))
+
+#Putting all the PR and CL values into separate columns
+country1<-tidyr::pivot_longer(country, cols = starts_with("PR"), names_to = "PR2",values_to = "pr")
+country2<-tidyr::pivot_longer(country, cols = starts_with("CL"), names_to = "CL2",values_to = "cl")
+
+#Removing unnecessary columns to bind these datasets together
+country1<-country1[,-c(2:96)]
+country2<-country2[,-c(2:96)]
+
+#Binding datasets 
+country<-cbind(country1, country2, all.x=TRUE)
+country<-country[,-c(3,5)]
+
+#Creating dataset that has all the years, and removing unnecessary columns
+year<-t(year)
+year<-as.data.frame(year)
+year<-year[-c(1),]
+year<-year[,-c(2:208)]
+year<-data.frame(year)
+
+#Creating a loop that fills in missing values with the correct year
+for(i in 2:length(year$year)) {if (is.na(year$year[i])==TRUE) {year$year[i] <- year$year[i-1] }else{year$year[i] <-year$year[i]}}
+
+
+#Getting ready to merge datasets and removing duplicates
+FH<-select(country, country1)
+FH<-merge(FH, year)
+FH<-FH%>%distinct()
+
+#Recoding values in dataset
+FH$year<- recode(FH$year,"'1983-84'='1983';'1984-85'='1984';'1984-85'='1984';'1984-85'='1984';'1984-85'='1984';'1984-85'='1984';'1985-86'='1985';'1986-87'='1986';'1987-88'='1987';'1988-89'='1988';'1989-90'='1989';'1990-91'='1990';'1991-92'='1991';'1992-93'='1992';'1993-94'='1993';'1994-95'='1994';'1995-96'='1995';'1996-97'='1996';'1997-98'='1997';'1998-99'='1998';'1999-2000'='1999';'2000-01'='2000';'2001-02'='2001';'Jan.-Feb. 1973'='1973';'Jan.-Feb. 1974'='1974';'Jan.-Feb. 1975'='1975';'Jan.-Feb. 1976'='1976';'Jan.-Feb. 1977'='1977'")
+
+#Arrange dataset in alphabetic order and binding datasets
+FH<-FH %>% arrange(country1)
+country<-select(country, pr, cl)
+FH<-cbind(FH, country)
+
+#Removing rows so I can make USSR into Russia
+FH<-FH[-c(9043:9071),]
+FH<-FH[-c(6769:6786),]
+
+#Recode USSR 
+FH$country1<- recode(FH$country1, "'USSR'='Russia'")
+
+#Arrange Russia correctly by year and name
+FH<-FH%>% arrange(country1, year)
+
+#Filtering out states that are no longer consider countries
+FH$country1<-as.character(FH$country1)
+FH<-FH%>%filter(!country1 %in% c("Yugoslavia", "Vietnam, N.", "Vietnam, S.", "Germany, E.", "Germany, W.", "Yemen, N.", "Yemen, S.", "Czechoslovakia", "Serbia and Montenegro"))
+
+#Making PR and CL numeric variables
+FH$pr<-as.numeric(FH$pr)
+FH$cl<-as.numeric(FH$cl)
+
+#Making a table that shows the number of observations and countries in the dataset 
+Question<-c("Number of countries", "Number of observations")
+Question<-data.frame(Question)
+Answer<-c("195", "9165")
+Answer<-data.frame(Answer)
+T<-cbind(Question,Answer)
+
+#Creating a table to present results
+kable(T)%>%kable_styling(bootstrap_options = c("striped", "hover", "condensed","responsive", "bordered"))%>%
+  column_spec(1, bold=TRUE, background="skyblue", color="black")%>%
+  row_spec(0, bold=TRUE, background="skyblue", color="black")%>%
+  row_spec(1:2, color="black")
+```
+It should be noted, that I removed states from the data set that are no longer considered countries (i.e., Yugoslavia, North and South Vietnam, West and East Germany, North and South Yemen, Czechoslovakia, and Serbia and Montenegro). This means that Freedom House currently documents information on 195 countries (Freedom House, 2020A).
+
+# **Question 3 - Displaying the Countries with the Top 10 Largest Declines in Combined Scores**
+```{r message=FALSE, warning=FALSE}
+#Creating a combine scores variable and standardizing it on a 7 point scale
+FH<-dplyr::mutate(FH, CS = (pr + cl)/2)
+
+#Selecting all years that are 2010
+FH1<-FH%>%
+  dplyr::filter(year == "2010")%>%
+  dplyr::select(-c(2:4))%>%
+  dplyr::rename(Ten=CS)
+
+#Selecting all years that are 2020 
+FH2<-FH%>%
+  dplyr::filter(year == "2020")%>% 
+  dplyr::select(-c(2:4))%>% 
+  dplyr::rename(Twenty=CS)
+
+#Binding data sets together
+FH2<-cbind(FH1, FH2, all.x=TRUE)
+FH2<-FH2%>%select(-c(3,5))
+
+#Subtracting each combined score in 2020 by 2010 
+FH3<-FH2%>%dplyr::mutate(FH2, DCS = (Twenty-Ten), na.rm=TRUE)%>%
+#Removing unnecessary columns
+dplyr::select(-c(2:3,5))%>%
+#Omiting missing values
+na.omit(FH3)%>%
+#arranging the lowest values to the top of the dataset
+dplyr::arrange(DCS)%>%
+#Selecting the countries with the 10 largest declines
+dplyr::slice(1:10)%>%
+#Renaming column titles
+dplyr::rename("Country"="country1", "Declines in Combined Scores" = "DCS")
+
+#Displaying the countries with the top 10 largest declines
+kable(FH3)%>%kable_styling(bootstrap_options = c("striped", "hover", "condensed","responsive", "bordered"))%>%
+  column_spec(1, bold=TRUE, background="skyblue", color="black")%>%
+  row_spec(0, bold=TRUE, background="skyblue", color="black")%>%
+  row_spec(1:10, color="black")                                       
+
+```
+# **Question 3 - Hypothesis**
+It is worth mentioning that a decline in combined scores means an increase in freedom. Thus, between 2010 and 2020 Tunisia became more free by 3.5 points. I theorize that Tunisia gained this freedom as a result of the Arab Spring which occurred in the early 2010s and led to the Tunisian citizens' embrace of democratization (Zemni, 2015). 
+
+H1: Increase in public embrace of democratic values increases freedom
+
+# **Question 3 - Boxplot for Political Rights Scores**
+```{r message=FALSE, warning=FALSE}
+#Making boxplot for political right scores
+ggplot(FH, aes(x=pr), na.rm=TRUE)+ 
+#Changing colour of boxplot
+  geom_boxplot(colour="steelblue1",
+               fill="steelblue1",
+               alpha=0.3)+
+#Changing the title and x-y axis labels
+  labs(x="Political Rights Score", y="Probability Density",
+       title="Boxplot for Political Rights Scores") +
+#Creating the scale for the x-axis
+  scale_x_continuous(limits = c(0, 7),
+                     breaks = seq(from = 1, to=7, by=1))+
+#Fliping the plot and x-y axis
+  coord_flip()+
+#Changing the colour theme of the plot
+  dark_theme_gray()+
+#Removing gridlines 
+    theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())+
+#Changing colour and font size for title and x-y axis
+  font("title", size = 14, color = "snow")+
+   font("xy.title", size = 12, color = "snow")+
+  font("xy.text", color="snow")
+```
+
+This boxplot tells us the following about the political rights variable:
+
+1) The range of the variable goes from 1 to 7, where 1 equates to citizens having a significant amount of political rights and 7 means that citizens have minimal political rights. 
+2) The median is 4.
+3) The inter quartile range is 5 (i.e., the 1st qaurtile is at 1 and the 3rd is at 6). This indicates that 50% of the observations lie within this range. Furthermore, the large size of the boxplot suggests there is a significant amount of variance (making it difficult to predict the value of a given observation).
+4) There are no outliers shown in this plot. 
+
+# **Question 3 - Histogram for Political Rights Scores**
+```{r message=FALSE, warning=FALSE}
+#Creating mean line
+PRM<-mean(FH$pr, na.rm=TRUE)
+
+#Creating histogram plot
+p3<-ggplot(FH, aes(x=pr), na.rm=TRUE)+ 
+#Changing colour of plot
+  geom_histogram(binwidth=1,
+                 color="steelblue1",
+                 fill="steelblue1",
+                 alpha=0.3)+
+#Changing title and x-y axis labels
+  labs(x="Political Rights Score", y="Count", title="Histogram for Political Rights Scores")+
+#Changing the scale of the x-axis
+  scale_x_continuous(breaks= seq(from =1, to=7, by=1))+
+#Changing colour theme of plot
+  dark_theme_gray()+
+#Putting in mean line 
+  geom_vline(data=FH, aes(xintercept=PRM),
+             linetype="dashed")+
+#Removing gridlines 
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())+
+#Changing font and colour of title and x-y axis labels
+font("title", size = 14, color = "snow")+
+  font("xy.title", size = 12, color = "snow")+
+  font("xy.text", color="snow")
+
+#Creating interactive plot
+ggplotly(p3)
+```
+This histogram shows that the average political rights score for an observation is 3.73. The histogram has a bimodal distribution, meaning that most of the observations tend to be at the tail ends of the distribution. In other words, it is most common for an observation to have a high or low political rights score. 
+
+# **Question 3 - Boxplot for Civil Liberties Scores**
+```{r message=FALSE, warning=FALSE}
+#Same process as previous boxplot
+ggplot(FH, aes(x=cl), na.rm=TRUE)+ 
+  geom_boxplot(colour="steelblue1",
+               fill="steelblue1",
+               alpha=0.3)+
+  labs(x="Civil Liberties Score", y="Probability Density", title="Boxplot For Civil Liberties Scores") +
+  scale_x_continuous(limits = c(0, 7),
+                     breaks = seq(from = 1, to=7, by=1))+
+  coord_flip()+
+  dark_theme_gray()+
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())+
+  font("title", size = 14, color = "snow")+
+   font("xy.title", size = 12, color = "snow")+
+  font("xy.text", color="snow")
+
+```
+
+This boxplot tells us the following about the civil liberties variable:
+
+1) The range of the variable goes from 1 to 7. 1 suggests that citizens have a large amount of civil liberties while 7 means that citizens have minimal civil liberties. 
+2) The median of the variable is 4.
+3) The inter quartile range is 3. Meaning, that 50 percent of the observations are within the 1st quartile (i.e., 2) and 3rd quartile (i.e. 5). Although the variance is large, it is easier to predict an observation's value than its political rights score. 
+4) There are no outliers shown in this plot. 
+
+
+# **Question 3 - Histogram for Civil Liberties Scores**
+```{r }
+#Same process as previous histogram
+CLM<-mean(FH$cl, na.rm=TRUE)
+p2<-ggplot(FH, aes(x=cl), na.rm=TRUE)+
+  geom_histogram(binwidth=1,
+                 color="steelblue1",
+                 fill="steelblue1",
+                 alpha=0.3)+
+  labs(x="Civil Liberties Score", y="Count", title="Histogram for Civil Liberties Scores")+
+  scale_x_continuous(breaks= seq(from =1, to=7, by=1))+
+  dark_theme_gray()+
+  geom_vline(data=FH, aes(xintercept=CLM),
+             linetype="dashed")+
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())+
+  font("title", size = 14, color = "snow")+
+  font("xy.title", size = 12, color = "snow")+
+  font("xy.text", color="snow")
+
+ggplotly(p2)
+```
+The histogram has a fairly uniform distribution. This indicates that the observations tend to be evenly distributed throughout the graph. It should be noted that the most frequent score is 1 (i.e., 1563 observations), while the least frequent score is 7 (i.e., 721 observations). Additionally, the average civil liberties score for a given observation is 3.69. 
+
+
+# **Question 3 - Boxplot for Political Rights Score Per Year**
+```{r  fig.width=12, fig.height=8}
+#Making year a character variable
+FH$year<-as.character(FH$year)
+#Same process as previous boxplot except using viridis package and making a boxplot for each year
+ggplot(FH, aes(x=pr, y=year, na.rm=TRUE))+ 
+#Using viridis package to change colour for each boxplot 
+  geom_boxplot(fill=(viridis(47)), colour="white")+
+  labs(title="Boxplot for Political Rights Score Per Year",
+       x="Political Rights Score", y="Year") +
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())+
+  scale_x_continuous(limits = c(0, 7),
+                     breaks = seq(from = 1, to=7, by=1))+
+  coord_flip()+
+  dark_theme_gray()+
+  font("title", size = 14, color = "snow")+
+  font("xy.title", size = 12, color = "snow")+
+  font("xy.text", color="snow")+
+#Flipping the x-axis text to 90 degrees
+  theme(axis.text.x = element_text(angle = 90))
+```
+This plot tells us that the most common inter quartile range through out the years is 4. The median value for political rights decreased from 5 in 1973 to 3 in 1991. This suggests that over the years, states are giving more political rights to their citizens. 
+
+# **Question 3 - Histogram for Political Rights Scores Per Year**
+```{r fig.width=9, fig.height=9}
+#Same process as previous histogram but making a histogram for each year
+ggplot(FH, aes(x=pr), na.rm=TRUE)+ 
+  geom_histogram(binwidth=1,
+                 color="steelblue1",
+                 fill="steelblue1",
+                 alpha=0.3)+
+  labs(x="Civil Liberties Score", y="Count", title="Histogram for Political Rights Score Per Year")+
+  scale_x_continuous(breaks= seq(from =1, to=7, by=1))+
+  dark_theme_gray()+
+    theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())+
+  font("title", size = 14, color = "snow")+
+  font("xy.title", size = 12, color = "snow")+
+  font("xy.text", color="snow")+
+#Making sure that the plot shows a histogram for each year
+  facet_wrap(~year)
+```
+This plot suggests that over time, the number of observations with a political rights score of 1 have increased. This is shown by comparing the histogram graph for 1973 to the graph for 2020.
+
+
+# **Question 3 - Boxplot for Civil Liberties Score Per Year**
+```{r  fig.width=9, fig.height=9}
+#Same process as per year boxplot but for civil liberties score 
+FH$year<-as.character(FH$year)
+ggplot(FH, aes(x=cl, y=year, na.rm=TRUE))+ 
+  geom_boxplot(fill=(viridis(47)), colour="white")+
+  labs(title="Boxplot for Civil Liberties Score Per Year",
+       x="Civil Liberties Score", y="Year")+
+  scale_x_continuous(limits = c(0, 7),
+                     breaks = seq(from = 1, to=7, by=1))+
+  coord_flip()+
+  dark_theme_gray()+
+    theme(axis.text.x = element_text(angle = 90),
+          panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())+
+  font("title", size = 14, color = "snow")+
+  font("xy.title", size = 12, color = "snow")+
+  font("xy.text", color="snow")
+```
+This plot shows the most common inter quartile range throughout the years is 4 and that the median value has decreased over the years (i.e., in 1973 the median was 5 and in 2020 it is 3). The decrease in the median value suggests that there is a higher concentration of states giving more civil liberties to their citizens. 
+
+# **Question 3 - Histogram for Civil Liberties Score Per Year**
+```{r fig.width=12, fig.height=8}
+#Same process as previous histogram but for civil liberties score
+ggplot(FH, aes(x=cl), na.rm=TRUE)+ 
+  geom_histogram(binwidth=1,
+                 color="steelblue1",
+                 fill="steelblue1",
+                 alpha=0.3)+
+  labs(x="Civil Liberties Score", y="Count", title="Histogram for Civil Liberties Score Per Year")+
+  scale_x_continuous(breaks= seq(from =1, to=7, by=1))+
+  dark_theme_gray()+
+    theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())+
+  font("title", size = 14, color = "snow")+
+  font("xy.title", size = 12, color = "snow")+
+  font("xy.text", color="snow")+
+  facet_wrap(~year)
+```
+
+This plot suggests that over time, the number of observations with a civil liberties score of 1 have increased (i.e., in 2020 the most common score was 1). Additionally, the distribution has changed over time. In 1973, there was a bimodal distribution and in 2020 there is more of a uniform distribution.
+
+
+# **Question 3 - Problems with Freedom House Data**
+Freedom House's methodology for collecting data has three systematic biases. First, the data will likely be biased because governments tend to restrict access to information that show illegal or unjust activity (Skaaning, 2018; Steiner, 2014). For example, if an elected official got into office through voter fraud, the official would deny that information to the public. Second, there is inconsistent data coding because the methodology to code for the political rights and civil liberties scores have changed over the years and the previous coded data was not updated to match the new criteria (Skaaning, 2018;Steiner, 2014). Three, the data is subject to personal biases and coding inconsistency because it is based on the opinion of a team of experts (i.e., 125 analysts and 40 advisers) (Freedom House, 2020B; Skaaning, 2018).
+
+
+# **Question 4**
+
+## What projects did you work on?
+I worked for four requesters (i.e., Global Data Center, Admin, Peter Birsinger, and Echobox). For the first job, I was asked to examine news reports and state whether the countries mentioned in the article were neutral, positive, or hostile towards one another. For the second job, the requester asked me to gather information from specific websites. For the third job, the requester asked me to document the different types of advertisements mentioned by hosts during their podcasts. For the fourth job, I was asked to look at several foreign company websites and document information about employees (e.g., first and last name and the website where I found the information).
+
+## What was your experience like?
+Overall, it was an interesting experience because I could try numerous jobs in a short period, which made tasks more engaging and efficient. The downside of my experience was that sometimes the job listing details were not clear. The lack of clarity resulted in tasks taking longer than I expected. 
+
+## How did it influence your thoughts about the design, quality, and ethics of projects that use MTurk?
+The design and quality of the website was user friendly. It was easy to find numerous jobs and the qualifications for those jobs. Additionally, I could preview the task to see if I wanted to work for the requester. 
+
+I noticed two ethical problems with the projects I worked on. The first being that I was underpaid (i.e., I made about three dollars in an hour). It seems that companies can legally get away with underpaying their workers (Sheehan, 2017). The second ethical problem being that I gave personal information to companies without the subjects' consent.
+
+## What are the differences and similarities between using MTurk workers and Undergraduates?
+There are five primary differences between using MTurk workers and undergraduates for research. First, MTurk workers tend to be more representative of the general population than undergraduates (Sheenan, 2017). Second, researchers can get a larger sample faster and cheaper by using MTurk workers rather than undergraduates (Behrend et al., 2011; Buhrmester, Kwang,  & Gosling, 2011). Third, researchers can better verfiy subjects' demographics if they use undergraduates because MTurk workers tend to be anonymous (Sheenan, 2017). Fourth, MTurk workers have less legal protections than undergraduates and therefore are more at risk of being financially exploited. For example, researchers can deny workers' payment and block them from taking part in future studies (Sheehan, 2018). Fifth, MTurk workers are generally more exposed to academic studies than undergraduates. This over-exposure has the potential to alter their responses which can lead to skewed results (Hitlin, 2016).
+
+The similarities for using MTurk workers and undergraduates as research subjects are that:
+1) the data collected from either subject type does not differ significantly in reliability (Buhrmester at al., 2011).
+2) MTurk workers and undergraduates tend to be more educated than the general population (Hitlin, 2016).
+3) using either subject type will likely result in voluntary response bias.
+
+# **References**
+Behrend, S. T., Sharek, David J. M., Adam W., & Wiebe, E, N. (2011). The Viability of Crowdsourcing for Survey Research. Behavior Research Methods, 43(3), pp. 800–813. https://doi.org/10.3758/s13428-011-0081-0
+
+Buhrmester, M., Kwang, T., & Gosling, S. D. (2011). Amazon’s Mechanical Turk: A New Source of Inexpensive, Yet High-Quality Data? Perspectives on Psychological Science, 6(1), pp. 3–5. doi:10.1177/1745691610393980
+
+Freedom House. (2020A). Freedom in the World. Retrieved from https://freedomhouse.org/report/freedom-world
+
+Freedom House. (2020B). Freedom in the World Research Methodology. Retrieved from https://freedomhouse.org/reports/freedom-world/freedom-world-research-methodology
+
+Hitlin, P. (2016). Mechancial Turkers: Young, well-educated and frequent users. Pew Research Institute. Retrieved from https://www.pewresearch.org/internet/2016/07/11/turkers-in-this-canvassing-young-well-educated-and-frequent-users/
+
+Skaaning, S. E. (2018). Different Types of Data and the Validity of Democracy Measures. Politics and Governance, 6(1), pp. 105–116. https://doi.org/10.17645/pag.v6i1.1183
+
+Sheehan, K. B. (2017). Crowdsourcing Research: Data Collection with Amazon’s Mechanical Turk. Communication Monographs, 85(1), pp. 140–156. https://doi.org/10.1080/03637751.2017.1342043
+
+Steiner, N. D. (2014). Comparing Freedom House Democracy Scores to Alternative Indices and Testing for Political Bias: Are US Allies Rated as More Democratic by Freedom House? Journal of Comparative Policy Analysis, 18(4), 329–349. https://doi.org/10.1080/13876988.2013.877676
+
+Zemni, S. (2015). The Extraordinary Politics of the Tunisian Revolution: The Process of Constitution Making. Mediterranean Politics, 20(1), pp. 1–17. https://doi.org/10.1080/13629395.2013.874108
+
+
